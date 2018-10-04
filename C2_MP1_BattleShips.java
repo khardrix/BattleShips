@@ -14,75 +14,80 @@
 
 //IMPORTS of needed tools and plug-ins.
 import java.util.Scanner;
+import java.util.Random;
+
 
 public class C2_MP1_BattleShips {
 
     //CLASS VARIABLE(s) declaration(s).
     static Scanner input = new Scanner(System.in);
-
+    static Random dice = new Random();
 
 
     public static void main(String[] args){
 
+        //INSTANCE VARIABLE(s) declaration(s).
         String [][] oceanMap = new String[10][10];
+        int userXAttack, userYAttack;
+
 
         System.out.println("\n**** Welcome to Battle Ships game **** \n\nRight now, " +
                 "the sea is empty. \n");
         printMap(oceanMap);
 
         System.out.println("Deploy your ships: \n");
+        placePlayerShips(oceanMap);
+        placeCompShips(oceanMap);
 
-        int x1 = checkChoice("X", 1);
-        int y1 = checkChoice("Y", 1);
-        oceanMap[x1][y1] = "1";
-
-        int x2 = checkChoice("X", 2);
-        int y2 = checkChoice("Y", 2);
-        oceanMap[x2][y2] = "1";
-
-        int x3 = checkChoice("X", 3);
-        int y3 = checkChoice("Y", 3);
-        oceanMap[x3][y3] = "1";
-
-        int x4 = checkChoice("X", 4);
-        int y4 = checkChoice("Y", 4);
-        oceanMap[x4][y4] = "1";
-
-        int x5 = checkChoice("X", 5);
-        int y5 = checkChoice("Y", 5);
-        oceanMap[x5][y5] = "1";
-
-        System.out.println("Here is the current map: ");
+        System.out.println("\nHere is the current map with all ships placed. \n");
         printMap(oceanMap);
+
+        System.out.println("Get ready! It's time for ... Battle Ships! \n");
+
+        //Player guesses recorded as "0"s (zeros).
+        System.out.println("YOUR TURN: ");
+        attackCompShips(oceanMap);
+        attackCompShips(oceanMap);
+
+
     }
+
 
     public static void printMap(String[][] map){
 
-        System.out.println("  0123456789  ");
+        String s;
+        System.out.println("  0123456789");
         for(int row = 0; row < map.length; row++){
             System.out.print(row + "|");
             for(int col = 0; col < map[row].length; col++){
-                if(map[row][col] == null){
-                    System.out.print(" ");
-                }else if(map[row][col].equals("1")){
-                    System.out.print("@");
-                } else{
-                    System.out.print(map[row][col]);
-                }
+                s = map[row][col];
+                System.out.print(translateDataToMapVisible(s));
             }
             System.out.println("|" + row);
-            }
-        System.out.println("  0123456789  ");
-        System.out.println();
+        }
+        System.out.println("  0123456789 \n");
     }
 
 
-    public static int checkChoice(String cor, int ship){
+    public static String translateDataToMapVisible(String str){
+
+        if(str == null){
+            return " ";
+        }else if(str.equals("1")){
+            return "@";
+        }else{
+            return " ";
+        }
+
+    }
+
+
+    public static int validateInputRangeForPlacing(String cor, int ship){
 
         System.out.print("Enter " + cor + " coordinate for your ship #" + ship + ": ");
         String x = input.nextLine();
         while(!x.matches("[0123456789]")){
-            System.out.print("Invalid Input(numbers 0 - 9 and empty locations only). Enter "
+            System.out.print("Invalid Input(numbers 0 - 9). Enter "
                     + cor + " coordinate for your ship #" + ship + ": ");
             x = input.nextLine();
         }
@@ -94,11 +99,82 @@ public class C2_MP1_BattleShips {
 
     public static boolean isEmptySpot(int x, int y, String [][] map){
 
-        if(map[x][y].equals("1")){
-            return false;
-        }else{
+        if(map[x][y] == null){
             return true;
+        }else{
+            return false;
         }
     }
-}
 
+
+    public static void placePlayerShips(String[][] map){
+
+        for(int i = 1; i <= 5; i++) {
+            int x, y;
+            do {
+                x = validateInputRangeForPlacing("X", i);
+                y = validateInputRangeForPlacing("Y", i);
+                if(!isEmptySpot(x, y, map)){
+                    System.out.println("Space is occupied. Choose again.");
+                }
+            }while(!isEmptySpot(x, y, map));
+            map[x][y] = "1";
+        }
+    }
+
+
+    public static void placeCompShips(String[][] map){
+
+        System.out.println("Computer is deploying ships: ");
+        for(int i = 1; i <= 5; i++) {
+            int compCorChoiceX, compCorChoiceY;
+            do {
+                compCorChoiceX = dice.nextInt(10);
+                compCorChoiceY = dice.nextInt(10);
+                if(isEmptySpot(compCorChoiceX, compCorChoiceY, map)){
+                    System.out.println(i + ". ship DEPLOYED.");
+                }
+            }while(!isEmptySpot(compCorChoiceX, compCorChoiceY, map));
+            map[compCorChoiceX][compCorChoiceY] = "2";
+        }
+    }
+
+
+    public static int validateInputRangeForAttacking(String cor){
+
+        System.out.print("Enter " + cor + " coordinate to attack: ");
+        String x = input.nextLine();
+        while(!x.matches("[0123456789]")){
+            System.out.print("Invalid Input(numbers 0 - 9). Enter "
+                    + cor + " coordinate for your ship to attack: ");
+            x = input.nextLine();
+        }
+        System.out.println("Valid Input. Thank you! \n");
+
+        return Integer.parseInt(x);
+    }
+
+
+    public static boolean checkPlayerHasNotGuessed(int x, int y, String [][] map){
+
+        if(map[x][y].equals("0")){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
+    public static void attackCompShips(String[][] map){
+
+        int x, y;
+        do {
+            x = validateInputRangeForAttacking("X");
+            y = validateInputRangeForAttacking("Y");
+            if(!checkPlayerHasNotGuessed(x, y, map)){
+                System.out.println("You have guess this spot before. Choose again.");
+            }
+        }while(!checkPlayerHasNotGuessed(x, y, map));
+        map[x][y] = "0";
+    }
+}
