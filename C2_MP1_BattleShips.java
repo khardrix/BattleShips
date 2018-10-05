@@ -26,6 +26,7 @@ public class C2_MP1_BattleShips {
     static int playerX, playerY, compX, compY;
     static String [][] oceanMap = new String[10][10];
     static String [][] compMap = new String[10][10];
+    static int playerShips, compShips;
 
 
     public static void main(String[] args){
@@ -43,30 +44,7 @@ public class C2_MP1_BattleShips {
 
         System.out.println("Get ready! It's time for ... Battle Ships! \n");
 
-
-        attackByPlayer(oceanMap);
-        attackByComp(oceanMap);
-        attackByPlayer(oceanMap);
-        attackByComp(oceanMap);
-        attackByPlayer(oceanMap);
-        attackByComp(oceanMap);
-        attackByPlayer(oceanMap);
-        attackByComp(oceanMap);
-        attackByPlayer(oceanMap);
-        attackByComp(oceanMap);
-        attackByPlayer(oceanMap);
-        attackByComp(oceanMap);
-        attackByPlayer(oceanMap);
-        attackByComp(oceanMap);
-        attackByPlayer(oceanMap);
-        attackByComp(oceanMap);
-        attackByPlayer(oceanMap);
-        attackByComp(oceanMap);
-        attackByPlayer(oceanMap);
-        attackByComp(oceanMap);
-
-
-
+        playGame();
     }
 
 
@@ -99,13 +77,6 @@ public class C2_MP1_BattleShips {
         else if (str.equals("8"))
             return "!";
         return " ";
-
-
-        /*
-        player hitting their own ship will be a "9". player miss will be a "0".
-        player hitting computer ship will be "8".
-         */
-
     }
 
 
@@ -184,6 +155,8 @@ public class C2_MP1_BattleShips {
 
     public static void validateNewChoicePlayer(String[][] map){
 
+        System.out.println("Your ships: " + playerShips +
+                " | Computer ships: " + compShips);
         do {
             playerX = validateInputRangeForAttacking("X");
             playerY = validateInputRangeForAttacking("Y");
@@ -200,9 +173,6 @@ public class C2_MP1_BattleShips {
         do {
             compX = dice.nextInt(10);
             compY = dice.nextInt(10);
-            if(!isEmptySpot(compX, compY, map)){
-                System.out.println("Already guessed this spot. Choose again.");
-            }
         }while(!isEmptySpot(compX, compY, map));
         map[compX][compY] = "0";
     }
@@ -211,16 +181,19 @@ public class C2_MP1_BattleShips {
     public static void attackByPlayer(String[][] map){
 
         System.out.println("YOUR TURN: ");
+        printMap(oceanMap);
         validateNewChoicePlayer(playerMap);
         if(oceanMap[playerX][playerY] == null){
             oceanMap[playerX][playerY] = "0";
-            System.out.println("You missed!");
+            System.out.println("You missed!\n");
         }else if(oceanMap[playerX][playerY].equals("1")){
             oceanMap[playerX][playerY] = "9";
-            System.out.println("Oh no, you sunk one of your own ships :(");
+            playerShips--;
+            System.out.println("Oh no, you sunk one of your own ships :(\n");
         }else if(oceanMap[playerX][playerY].equals("2")){
             oceanMap[playerX][playerY] = "8";
-            System.out.println("Boom! You sunk a computer ship!");
+            compShips--;
+            System.out.println("Boom! You sunk a computer ship!\n");
         }
         printMap(oceanMap);
     }
@@ -231,14 +204,41 @@ public class C2_MP1_BattleShips {
         System.out.println("COMPUTER'S TURN: ");
         validateNewChoiceComp(compMap);
         if(oceanMap[compX][compY] == null){
-            System.out.println("Computer missed!");
+            System.out.println("Computer missed!\n");
         }else if(oceanMap[compX][compY].equals("1")){
             oceanMap[compX][compY] = "9";
-            System.out.println("Oh no, the computer sunk one of your ships :(");
+            playerShips--;
+            System.out.println("Oh no, the computer sunk one of your ships :(\n");
         }else if(oceanMap[compX][compY].equals("2")){
             oceanMap[compX][compY] = "8";
-            System.out.println("Haha! The computer sunk one of its own ships!");
+            compShips--;
+            System.out.println("Haha! The computer sunk one of its own ships!\n");
         }
-        printMap(oceanMap);
+    }
+
+
+    public static boolean isGameOver(int player, int comp){
+
+        if(player == 0){
+            System.out.println("Boo! You lost Battle Ships!");
+            return true;
+        }else if(comp == 0){
+            System.out.println("Hooray! You won Battle Ships!");
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
+    public static void playGame(){
+
+        playerShips = 5;
+        compShips = 5;
+        while(!isGameOver(playerShips, compShips)){
+            attackByPlayer(oceanMap);
+            attackByComp(oceanMap);
+        }
+        System.out.println("Game over!");
     }
 }
