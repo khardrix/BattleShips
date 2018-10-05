@@ -30,12 +30,6 @@ public class C2_MP1_BattleShips {
 
     public static void main(String[] args){
 
-        //INSTANCE VARIABLE(s) declaration(s).
-        //String [][] oceanMap = new String[10][10];
-
-        //String [][] compMap = new String[10][10];
-
-
         System.out.println("\n**** Welcome to Battle Ships game **** \n\nRight now, " +
                 "the sea is empty. \n");
         printMap(oceanMap);
@@ -49,10 +43,6 @@ public class C2_MP1_BattleShips {
 
         System.out.println("Get ready! It's time for ... Battle Ships! \n");
 
-        //Player guesses recorded as "0"s (zeros).
-        //System.out.println("YOUR TURN: ");
-        //validateNewChoicePlayer(playerMap);
-        //validateNewChoicePlayer(playerMap);
 
         attackByPlayer(oceanMap);
         attackByComp(oceanMap);
