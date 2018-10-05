@@ -22,13 +22,18 @@ public class C2_MP1_BattleShips {
     //CLASS VARIABLE(s) declaration(s).
     static Scanner input = new Scanner(System.in);
     static Random dice = new Random();
+    static String [][] playerMap = new String[10][10];
+    static int playerX, playerY, compX, compY;
+    static String [][] oceanMap = new String[10][10];
+    static String [][] compMap = new String[10][10];
 
 
     public static void main(String[] args){
 
         //INSTANCE VARIABLE(s) declaration(s).
-        String [][] oceanMap = new String[10][10];
-        int userXAttack, userYAttack;
+        //String [][] oceanMap = new String[10][10];
+
+        //String [][] compMap = new String[10][10];
 
 
         System.out.println("\n**** Welcome to Battle Ships game **** \n\nRight now, " +
@@ -45,9 +50,31 @@ public class C2_MP1_BattleShips {
         System.out.println("Get ready! It's time for ... Battle Ships! \n");
 
         //Player guesses recorded as "0"s (zeros).
-        System.out.println("YOUR TURN: ");
-        attackCompShips(oceanMap);
-        attackCompShips(oceanMap);
+        //System.out.println("YOUR TURN: ");
+        //validateNewChoicePlayer(playerMap);
+        //validateNewChoicePlayer(playerMap);
+
+        attackByPlayer(oceanMap);
+        attackByComp(oceanMap);
+        attackByPlayer(oceanMap);
+        attackByComp(oceanMap);
+        attackByPlayer(oceanMap);
+        attackByComp(oceanMap);
+        attackByPlayer(oceanMap);
+        attackByComp(oceanMap);
+        attackByPlayer(oceanMap);
+        attackByComp(oceanMap);
+        attackByPlayer(oceanMap);
+        attackByComp(oceanMap);
+        attackByPlayer(oceanMap);
+        attackByComp(oceanMap);
+        attackByPlayer(oceanMap);
+        attackByComp(oceanMap);
+        attackByPlayer(oceanMap);
+        attackByComp(oceanMap);
+        attackByPlayer(oceanMap);
+        attackByComp(oceanMap);
+
 
 
     }
@@ -69,15 +96,25 @@ public class C2_MP1_BattleShips {
     }
 
 
-    public static String translateDataToMapVisible(String str){
+    public static String translateDataToMapVisible(String str) {
 
-        if(str == null){
+        if (str == null)
             return " ";
-        }else if(str.equals("1")){
+        else if (str.equals("1"))
             return "@";
-        }else{
-            return " ";
-        }
+        else if (str.equals("9"))
+            return "x";
+        else if (str.equals("0"))
+            return "-";
+        else if (str.equals("8"))
+            return "!";
+        return " ";
+
+
+        /*
+        player hitting their own ship will be a "9". player miss will be a "0".
+        player hitting computer ship will be "8".
+         */
 
     }
 
@@ -146,7 +183,7 @@ public class C2_MP1_BattleShips {
         String x = input.nextLine();
         while(!x.matches("[0123456789]")){
             System.out.print("Invalid Input(numbers 0 - 9). Enter "
-                    + cor + " coordinate for your ship to attack: ");
+                    + cor + " coordinate to attack: ");
             x = input.nextLine();
         }
         System.out.println("Valid Input. Thank you! \n");
@@ -155,9 +192,35 @@ public class C2_MP1_BattleShips {
     }
 
 
-    public static boolean checkPlayerHasNotGuessed(int x, int y, String [][] map){
+    public static void validateNewChoicePlayer(String[][] map){
 
-        if(map[x][y].equals("0")){
+        do {
+            playerX = validateInputRangeForAttacking("X");
+            playerY = validateInputRangeForAttacking("Y");
+            if(!isEmptySpot(playerX, playerY, map)){
+                System.out.println("Already guessed this spot. Choose again.");
+            }
+        }while(!isEmptySpot(playerX, playerY, map));
+        map[playerX][playerY] = "0";
+    }
+
+
+    public static void validateNewChoiceComp(String[][] map){
+
+        do {
+            compX = dice.nextInt(10);
+            compY = dice.nextInt(10);
+            if(!isEmptySpot(compX, compY, map)){
+                System.out.println("Already guessed this spot. Choose again.");
+            }
+        }while(!isEmptySpot(compX, compY, map));
+        map[compX][compY] = "0";
+    }
+
+
+    public static boolean hitPlayer(int x, int y, String [][] map){
+
+        if(map[x][y].equals("1")){
             return true;
         }else{
             return false;
@@ -165,16 +228,46 @@ public class C2_MP1_BattleShips {
     }
 
 
-    public static void attackCompShips(String[][] map){
+    public static boolean hitComp(int x, int y, String [][] map){
 
-        int x, y;
-        do {
-            x = validateInputRangeForAttacking("X");
-            y = validateInputRangeForAttacking("Y");
-            if(!checkPlayerHasNotGuessed(x, y, map)){
-                System.out.println("You have guess this spot before. Choose again.");
-            }
-        }while(!checkPlayerHasNotGuessed(x, y, map));
-        map[x][y] = "0";
+        if(map[x][y].equals("2")){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public static void attackByPlayer(String[][] map){
+
+        System.out.println("YOUR TURN: ");
+        validateNewChoicePlayer(playerMap);
+        if(oceanMap[playerX][playerY] == null){
+            oceanMap[playerX][playerY] = "0";
+            System.out.println("You missed!");
+        }else if(oceanMap[playerX][playerY].equals("1")){
+            oceanMap[playerX][playerY] = "9";
+            System.out.println("Oh no, you sunk one of your own ships :(");
+        }else if(oceanMap[playerX][playerY].equals("2")){
+            oceanMap[playerX][playerY] = "8";
+            System.out.println("Boom! You sunk a computer ship!");
+        }
+        printMap(oceanMap);
+    }
+
+
+    public static void attackByComp(String[][] map){
+
+        System.out.println("COMPUTER'S TURN: ");
+        validateNewChoiceComp(compMap);
+        if(oceanMap[compX][compY] == null){
+            System.out.println("Computer missed!");
+        }else if(oceanMap[compX][compY].equals("1")){
+            oceanMap[compX][compY] = "9";
+            System.out.println("Oh no, the computer sunk one of your ships :(");
+        }else if(oceanMap[compX][compY].equals("2")){
+            oceanMap[compX][compY] = "8";
+            System.out.println("Haha! The computer sunk one of its own ships!");
+        }
+        printMap(oceanMap);
     }
 }
