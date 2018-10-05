@@ -218,25 +218,6 @@ public class C2_MP1_BattleShips {
     }
 
 
-    public static boolean hitPlayer(int x, int y, String [][] map){
-
-        if(map[x][y].equals("1")){
-            return true;
-        }else{
-            return false;
-        }
-    }
-
-
-    public static boolean hitComp(int x, int y, String [][] map){
-
-        if(map[x][y].equals("2")){
-            return true;
-        }else{
-            return false;
-        }
-    }
-
     public static void attackByPlayer(String[][] map){
 
         System.out.println("YOUR TURN: ");
